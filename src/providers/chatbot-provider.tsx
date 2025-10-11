@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useOnMessage } from "@/hooks/use-on-message";
-import { loadProject, loadVisitor } from "@/utils/helpers";
+import { loadProject, loadVisitor, sendMessageToParent } from "@/utils/helpers";
 import z from "zod";
 
 import { ChatbotContext } from "./chatbot-context";
@@ -35,9 +35,7 @@ export default function ChatbotProvider({
 
       const visitor = await loadVisitor(apiKey);
       setVisitor(visitor ?? null);
-      if (window.parent !== window) {
-        window.parent.postMessage({ __SA: { type: "ready" } }, "*");
-      }
+      sendMessageToParent("ready");
     } catch (error) {
       console.error(error);
     } finally {
@@ -47,18 +45,17 @@ export default function ChatbotProvider({
 
   useEffect(() => {
     void loadProjectAndCustomer(apiKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiKey]);
+  }, [apiKey, loadProjectAndCustomer]);
 
   useEffect(() => {
     if (window.parent === window) {
       return;
     }
 
-    window.parent.postMessage({ __SA: { type: "get_page_url" } }, "*");
+    sendMessageToParent("get_page_url");
 
     const timer = setInterval(() => {
-      window.parent.postMessage({ __SA: { type: "get_page_url" } }, "*");
+      sendMessageToParent("get_page_url");
     }, 3000);
 
     return () => {

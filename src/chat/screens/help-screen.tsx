@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { useChatbot } from "@/providers/chatbot-context";
 import { getHeaders } from "@/utils/helpers";
-import { api } from "@/utils/openapi";
+import { $api } from "@/utils/openapi";
 import { ChevronRightIcon } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router";
@@ -26,7 +26,7 @@ function QnAList() {
   const { apiKey, project } = useChatbot();
   const [ref, inView] = useInView();
 
-  const qnasQuery = api.useInfiniteQuery(
+  const qnasQuery = $api.useInfiniteQuery(
     "get",
     "/projects/{projectId}/qnas",
     {

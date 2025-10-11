@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { useChatbot } from "@/providers/chatbot-context";
 import { getHeaders } from "@/utils/helpers";
-import { api } from "@/utils/openapi";
+import { $api } from "@/utils/openapi";
 import {
   ChevronRightIcon,
   MessageCirclePlusIcon,
@@ -53,7 +53,7 @@ function MessagesList({ status }: { status: ChatStatus }) {
   const navigate = useNavigate();
   const [ref, inView] = useInView();
 
-  const messagesQuery = api.useInfiniteQuery(
+  const messagesQuery = $api.useInfiniteQuery(
     "get",
     "/conversations",
     {

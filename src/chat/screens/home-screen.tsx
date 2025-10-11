@@ -13,7 +13,7 @@ import {
   getHeaders,
   getWelcomeUIMessages,
 } from "@/utils/helpers";
-import { api, fetchClient } from "@/utils/openapi";
+import { $api, fetchClient } from "@/utils/openapi";
 import { useQueryClient } from "@tanstack/react-query";
 import { HistoryIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router";
@@ -78,7 +78,7 @@ export default function ChatHomeScreen() {
 
         if (res.data) {
           queryClient.setQueryData(
-            api.queryOptions("get", "/conversations/{conversationId}", {
+            $api.queryOptions("get", "/conversations/{conversationId}", {
               params: { path: { conversationId: res.data.id } },
               headers: getHeaders(apiKey),
             }).queryKey,
@@ -88,7 +88,7 @@ export default function ChatHomeScreen() {
                 id: userMessage.id,
                 content: message,
               },
-              messages: [userMessage],
+              messages: [],
             } satisfies Conversation,
           );
 

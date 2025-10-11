@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useChatbot } from "@/providers/chatbot-context";
 import { useTheme } from "@/providers/theme-context";
 import { getHeaders } from "@/utils/helpers";
-import { api } from "@/utils/openapi";
+import { $api } from "@/utils/openapi";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { formatDistanceToNow } from "date-fns";
 import { UserIcon } from "lucide-react";
@@ -16,7 +16,7 @@ export default function QnAScreen() {
   const navigate = useNavigate();
   const { apiKey, project } = useChatbot();
   const { qnaId } = useParams<{ qnaId: string }>();
-  const qnaQuery = api.useQuery("get", "/projects/{projectId}/qnas/{qnaId}", {
+  const qnaQuery = $api.useQuery("get", "/projects/{projectId}/qnas/{qnaId}", {
     params: { path: { qnaId: qnaId ?? "", projectId: project.id } },
     headers: getHeaders(apiKey),
   });

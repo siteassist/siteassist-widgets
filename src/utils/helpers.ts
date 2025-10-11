@@ -8,8 +8,14 @@ import { fetchClient } from "./openapi";
 export const makePorojectKey = (apiKey: string) => `sa_project_${apiKey}`;
 export const makeVisitorKey = (apiKey: string) => `sa_visitor_${apiKey}`;
 
+export const sendMessageToParent = (type: string, payload?: unknown) => {
+  if (window.parent !== window) {
+    window.parent.postMessage({ __SA: { type, payload } }, "*");
+  }
+};
+
 export const closeWidget = () => {
-  window.parent.postMessage({ __SA: { type: "close" } }, "*");
+  sendMessageToParent("close");
 };
 
 export function pickTextColorYIQ(hex: string) {

@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useOnMessage } from "@/hooks/use-on-message";
 import ProjectProvider from "@/providers/project-provider";
 import ThemeProvider from "@/providers/theme-provider";
+import { sendMessageToParent } from "@/utils/helpers";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 import { createMemoryRouter, RouterProvider } from "react-router";
@@ -83,7 +84,7 @@ export default function ChatPreviewApp() {
   }, []);
 
   useEffect(() => {
-    window.parent.postMessage({ __SA: { type: "ready" } }, "*");
+    sendMessageToParent("ready");
   }, []);
 
   if (!project) {

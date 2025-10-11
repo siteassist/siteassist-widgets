@@ -25,11 +25,13 @@ export default function MessagesView({
   status,
   onFeedbackClick,
   onRegenerateClick,
+  isHumanHandled,
 }: {
   messages: CustomUIMessage[];
   status?: ChatStatus;
   onFeedbackClick?: (messageId: string, feedback: "like" | "dislike") => void;
   onRegenerateClick?: () => void;
+  isHumanHandled?: boolean;
 }) {
   const theme = useTheme();
 
@@ -161,7 +163,9 @@ export default function MessagesView({
             </div>
           );
         })}
-        {status === "submitted" && <ShimmeringText text="Thinking" />}
+        {status === "submitted" && !isHumanHandled && (
+          <ShimmeringText text="Thinking" />
+        )}
         {status === "error" && (
           <div className="flex items-center gap-4 p-6">
             <p className="text-muted-foreground text-center text-sm">

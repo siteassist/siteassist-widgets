@@ -8,4 +8,4 @@ export const fetchClient = createFetchClient<paths>({
   baseUrl: `${API_URL}/v2`,
 });
 
-export const api = createClient(fetchClient);
+export const $api = createClient(fetchClient);

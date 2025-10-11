@@ -2,6 +2,7 @@ import type { ChatStatus } from "ai";
 import type { Dispatch, FormEventHandler, SetStateAction } from "react";
 import { useEffect, useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { useOnMessage } from "@/hooks/use-on-message";
 import { useProject } from "@/providers/project-context";
 import { ArrowUpIcon, Square } from "lucide-react";
 
@@ -58,6 +59,12 @@ export default function MessageInputBar({
     );
   }, [loading, input, error, onStop]);
 
+  useOnMessage((type) => {
+    if (type === "focus") {
+      textAreaRef.current?.focus();
+    }
+  });
+
   useEffect(() => {
     if (textAreaRef.current) {
       textAreaRef.current.style.height = "0px";
@@ -65,29 +72,6 @@ export default function MessageInputBar({
         textAreaRef.current.scrollHeight + 2 + "px";
     }
   }, [input]);
-
-  useEffect(() => {
-    if (window === window.parent) {
-      return;
-    }
-
-    const handleMessage = (
-      event: MessageEvent<{ __SA?: { type: string; payload: unknown } }>,
-    ) => {
-      if (event.data.__SA) {
-        const { type } = event.data.__SA;
-        switch (type) {
-          case "focus":
-            return textAreaRef.current?.focus();
-        }
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => {
-      window.removeEventListener("message", handleMessage);
-    };
-  }, []);
 
   return (
     <div className="from-background/0 via-background to-background relative z-20 shrink-0 bg-gradient-to-b via-[1.25rem]">
