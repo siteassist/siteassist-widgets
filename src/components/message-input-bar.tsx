@@ -1,0 +1,126 @@
+import type { ChatStatus } from "ai";
+import type { Dispatch, FormEventHandler, SetStateAction } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { useProject } from "@/providers/project-context";
+import { ArrowUpIcon, Square } from "lucide-react";
+
+export interface MessageInputBarProps {
+  autoFocus?: boolean;
+  onSubmit?: FormEventHandler<HTMLFormElement>;
+  input: string;
+  setInput: Dispatch<SetStateAction<string>>;
+  status?: ChatStatus;
+  error?: Error;
+  onStop?: () => void;
+}
+
+export default function MessageInputBar({
+  status,
+  error,
+  autoFocus,
+  input,
+  setInput,
+  onSubmit,
+  onStop,
+}: MessageInputBarProps) {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const project = useProject();
+
+  const loading = status === "streaming" || status === "submitted";
+
+  const sendButton = useMemo(() => {
+    if (loading) {
+      return (
+        <Button
+          type="button"
+          size="icon"
+          variant="secondary"
+          onClick={onStop}
+          className="size-9 rounded-full"
+        >
+          <Square className="fill-foreground size-5" />
+          <div className="sr-only">Stop</div>
+        </Button>
+      );
+    }
+
+    return (
+      <Button
+        type="submit"
+        size="icon"
+        disabled={!input.trim() || !!error}
+        className="size-9 rounded-full"
+      >
+        <ArrowUpIcon className="size-5" />
+        <div className="sr-only">Send Message</div>
+      </Button>
+    );
+  }, [loading, input, error, onStop]);
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "0px";
+      textAreaRef.current.style.height =
+        textAreaRef.current.scrollHeight + 2 + "px";
+    }
+  }, [input]);
+
+  useEffect(() => {
+    if (window === window.parent) {
+      return;
+    }
+
+    const handleMessage = (
+      event: MessageEvent<{ __SA?: { type: string; payload: unknown } }>,
+    ) => {
+      if (event.data.__SA) {
+        const { type } = event.data.__SA;
+        switch (type) {
+          case "focus":
+            return textAreaRef.current?.focus();
+        }
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
+
+  return (
+    <div className="from-background/0 via-background to-background relative z-20 shrink-0 bg-gradient-to-b via-[1.25rem]">
+      <div className="mx-auto w-full max-w-screen-lg p-3 pt-0">
+        <form
+          className="bg-background ring-border dark:border-secondary dark:bg-secondary flex w-full shrink-0 flex-col rounded-[32px] border shadow-sm transition-shadow duration-300 dark:shadow-none"
+          onSubmit={onSubmit}
+        >
+          <div className="flex items-end px-2 py-0">
+            <textarea
+              ref={textAreaRef}
+              placeholder={
+                project.chatWidgetConfig.inputPlaceholder.trim() || "Message…"
+              }
+              className="placeholder:text-muted-foreground max-h-32 flex-1 resize-none border-none px-3 py-3 text-base leading-relaxed outline-none"
+              value={input}
+              onChange={(e) => setInput(e.currentTarget.value)}
+              rows={1}
+              onKeyDown={(e) => {
+                if (e.code === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (loading) {
+                    return;
+                  }
+                  e.currentTarget.form?.requestSubmit();
+                }
+              }}
+              autoFocus={autoFocus}
+            />
+            <div className="py-2">{sendButton}</div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
