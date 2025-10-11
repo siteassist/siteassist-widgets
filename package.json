@@ -1,8 +1,25 @@
 {
-  "name": "widgets",
+  "name": "siteassist-widgets",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "keywords": [
+    "sitesssist",
+    "javascript",
+    "ai",
+    "rag",
+    "assistant"
+  ],
+  "homepage": "https://siteassist.io",
+  "bugs": {
+    "url": "https://github.com/siteassist/siteassist-widgets/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siteassist/siteassist-widgets.git"
+  },
+  "license": "MIT",
+  "author": "SiteAssist",
   "scripts": {
     "clean": "git clean -xdf .turbo dist node_modules",
     "dev": "vite",
