@@ -1,6 +1,6 @@
 import type { ChatStatus } from "ai";
 import type { Dispatch, FormEventHandler, SetStateAction } from "react";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useOnMessage } from "@/hooks/use-on-message";
 import { useProject } from "@/providers/project-context";
@@ -27,6 +27,7 @@ export default function MessageInputBar({
 }: MessageInputBarProps) {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const project = useProject();
+  const [isFocused, setIsFocused] = useState(false);
 
   const loading = status === "streaming" || status === "submitted";
 
@@ -66,12 +67,12 @@ export default function MessageInputBar({
   });
 
   useEffect(() => {
-    if (textAreaRef.current) {
+    if (textAreaRef.current && isFocused) {
       textAreaRef.current.style.height = "0px";
       textAreaRef.current.style.height =
         textAreaRef.current.scrollHeight + 2 + "px";
     }
-  }, [input]);
+  }, [input, isFocused]);
 
   return (
     <div className="from-background/0 via-background to-background relative z-20 shrink-0 bg-gradient-to-b via-[1.25rem]">
@@ -100,6 +101,8 @@ export default function MessageInputBar({
                 }
               }}
               autoFocus={autoFocus}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
             />
             <div className="py-2">{sendButton}</div>
           </div>
