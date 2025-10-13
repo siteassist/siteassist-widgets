@@ -15,6 +15,8 @@ import {
   ThumbsUpIcon,
 } from "lucide-react";
 import { harden } from "rehype-harden";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
 import { Streamdown } from "streamdown";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
 
@@ -179,6 +181,9 @@ type Citation = {
 };
 // const citationRegex = /【(\d+)†([^】]+)】/g;
 
+// Matches in-text reference style: [Some Label][1]  OR just  [1]
+const refRegex = /\[((?:[^\]\r\n]|\\\])*)\]\[(\d+)\]|\[(\d+)\](?!:)/g;
+
 function MessageView({
   message,
   isStreaming,
@@ -195,7 +200,6 @@ function MessageView({
   const theme = useTheme();
 
   const citations = useMemo(() => {
-    if (isStreaming) return [];
     if (message.role !== "assistant" || message.humanAgent) {
       return [];
     }
@@ -216,14 +220,13 @@ function MessageView({
       const label = match[3];
 
       if (id && url && label) {
-        const _url = new URL(url);
-        _url.searchParams.set("utm_source", "siteassist");
-        citations.push({ id, url: _url.toString(), label });
+        citations.push({ id, url, label });
       }
     }
 
+    console.log(citations);
     return citations;
-  }, [isStreaming, message.humanAgent, message.parts, message.role]);
+  }, [message.humanAgent, message.parts, message.role]);
 
   return (
     <div className="group relative mx-auto mb-12 flex w-full">
@@ -236,6 +239,14 @@ function MessageView({
           <div className="grid min-w-0 gap-1 overflow-hidden rounded-xl [&_div]:rounded-sm">
             {message.parts.map((part, i) => {
               if (part.type === "text") {
+                const afterRefReplacement = part.text.replace(
+                  refRegex,
+                  (_match, _labeledText, idFromLabeled, idFromBare) => {
+                    const id = idFromLabeled || idFromBare;
+                    return `<sup class="citation" data-cite="${id}">[${id}]</sup>`;
+                  },
+                );
+
                 return (
                   <div
                     key={`part-${message.id}-${i}`}
@@ -252,7 +263,9 @@ function MessageView({
                       ]}
                       className="[&_.shiki]:bg-secondary! size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
                       isAnimating={isStreaming}
+                      remarkPlugins={[remarkGfm]}
                       rehypePlugins={[
+                        rehypeRaw,
                         [
                           harden,
                           {
@@ -261,8 +274,35 @@ function MessageView({
                           },
                         ],
                       ]}
+                      components={{
+                        sup({ node, ...props }) {
+                          const id = node?.properties?.["dataCite"];
+                          const citation = citations.find((c) => c.id === id);
+
+                          if (!citation) {
+                            return <sup {...props} />;
+                          }
+
+                          return (
+                            <Button
+                              asChild
+                              variant="secondary"
+                              size="sm"
+                              className="text-muted-foreground hover:text-foreground h-6 rounded-full px-2 text-xs underline-offset-2 hover:underline"
+                            >
+                              <a
+                                href={citation.url}
+                                target="_blank"
+                                rel="noopener"
+                              >
+                                {citation.label}
+                              </a>
+                            </Button>
+                          );
+                        },
+                      }}
                     >
-                      {part.text}
+                      {afterRefReplacement}
                     </Streamdown>
                   </div>
                 );
