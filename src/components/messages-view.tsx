@@ -1,12 +1,13 @@
 import type { CustomUIMessage } from "@/types/chat";
 import type { ChatStatus, ToolUIPart } from "ai";
 import type { ComponentProps } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/providers/theme-context";
 import {
   ArrowDownIcon,
+  ArrowUpRight,
   CheckIcon,
   CopyIcon,
   Loader,
@@ -33,12 +34,6 @@ export default function MessagesView({
   onRegenerateClick?: () => void;
   isHumanHandled?: boolean;
 }) {
-  const theme = useTheme();
-
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
-
   return (
     <StickToBottom
       className="relative -mb-6 flex-1 overflow-y-auto"
@@ -47,120 +42,20 @@ export default function MessagesView({
       role="log"
     >
       <StickToBottom.Content className="mx-auto max-w-screen-lg px-4 pt-8 pb-20">
-        {messages.map((message, messageIndex) => {
-          const isLastMessage = messageIndex === messages.length - 1;
+        {messages.map((message, index) => {
+          const isLastMessage = index === messages.length - 1;
           const isStreaming = isLastMessage && status === "streaming";
 
           return (
-            <div
+            <MessageView
+              index={index}
+              isLastMessage={isLastMessage}
+              isStreaming={isStreaming}
+              message={message}
               key={message.id}
-              className="group relative mx-auto mb-12 flex w-full"
-            >
-              <div
-                className={cn("flex w-full", {
-                  "justify-end": message.role === "user",
-                })}
-              >
-                <div className="grid max-w-[calc(100%-2rem)] min-w-0 gap-1 overflow-hidden rounded-xl">
-                  {message.parts.map((part, i) => {
-                    if (part.type === "text") {
-                      return (
-                        <div
-                          key={`part-${message.id}-${i}`}
-                          className={cn("bg-secondary/50 px-3 py-2.5 text-sm", {
-                            "bg-[var(--user-message-bubble)]! text-[var(--user-message-bubble-foreground)]!":
-                              message.role === "user",
-                          })}
-                        >
-                          <Streamdown
-                            key={theme.isDark ? "dark" : "light"}
-                            shikiTheme={[
-                              theme.isDark ? "github-dark" : "github-light",
-                              theme.isDark ? "github-dark" : "github-light",
-                            ]}
-                            className="[&_.shiki]:bg-secondary! size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
-                            isAnimating={isStreaming}
-                            rehypePlugins={[
-                              [
-                                harden,
-                                {
-                                  allowedLinkPrefixes: ["mailto:", "*"],
-                                  defaultOrigin: window.location.origin,
-                                },
-                              ],
-                            ]}
-                          >
-                            {part.text}
-                          </Streamdown>
-                        </div>
-                      );
-                    }
-
-                    if (part.type.startsWith("tool-action_")) {
-                      return <RenderActionTool part={part as ToolUIPart} />;
-                    }
-                  })}
-
-                  {!message.hideActions && !isStreaming && (
-                    <div
-                      className={cn(
-                        "absolute top-[calc(100%+4px)] right-0 left-0 flex items-center gap-1 px-2",
-                        {
-                          "justify-end opacity-0 transition-opacity duration-200 group-hover:opacity-100":
-                            message.role === "user",
-                        },
-                      )}
-                    >
-                      <CopyAction message={message} />
-                      {message.role === "assistant" && (
-                        <>
-                          <ButtonWithTooltip
-                            tooltip="Good Response"
-                            onClick={() =>
-                              onFeedbackClick?.(message.id, "like")
-                            }
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="size-7"
-                          >
-                            <ThumbsUpIcon
-                              className={cn({
-                                "fill-foreground text-foreground":
-                                  message.feedback === "like",
-                              })}
-                            />
-                          </ButtonWithTooltip>
-                          <ButtonWithTooltip
-                            tooltip="Bad Response"
-                            onClick={() =>
-                              onFeedbackClick?.(message.id, "dislike")
-                            }
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="size-7"
-                          >
-                            <ThumbsDownIcon
-                              className={cn({
-                                "fill-foreground text-foreground":
-                                  message.feedback === "dislike",
-                              })}
-                            />
-                          </ButtonWithTooltip>
-                        </>
-                      )}
-                    </div>
-                  )}
-
-                  {isStreaming ? (
-                    <div>
-                      <Loader className="size-4 animate-spin" />
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            </div>
+              onFeedbackClick={onFeedbackClick}
+              onRegenerateClick={onRegenerateClick}
+            />
           );
         })}
         {status === "submitted" && !isHumanHandled && (
@@ -276,3 +171,190 @@ const ScrollToBottomButton = ({
     )
   );
 };
+
+type Citation = {
+  id: string;
+  url: string;
+  label: string;
+};
+// const citationRegex = /【(\d+)†([^】]+)】/g;
+
+function MessageView({
+  message,
+  isStreaming,
+  onFeedbackClick,
+}: {
+  index: number;
+  isLastMessage?: boolean;
+  isStreaming?: boolean;
+  message: CustomUIMessage;
+
+  onFeedbackClick?: (messageId: string, feedback: "like" | "dislike") => void;
+  onRegenerateClick?: () => void;
+}) {
+  const theme = useTheme();
+
+  const citations = useMemo(() => {
+    if (isStreaming) return [];
+    if (message.role !== "assistant" || message.humanAgent) {
+      return [];
+    }
+
+    const citations: Citation[] = [];
+    const content = message.parts
+      .filter((part) => part.type === "text" && part.text)
+      .map((p) => (p.type == "text" ? p.text : ""))
+      .join("\n\n");
+
+    const matches = content.matchAll(
+      /^\[(\d+)\]:\s+(\S+)(?:\s+"([^"]+)")?\s*$/gm,
+    );
+
+    for (const match of matches) {
+      const id = match[1];
+      const url = match[2];
+      const label = match[3];
+
+      if (id && url && label) {
+        const _url = new URL(url);
+        _url.searchParams.set("utm_source", "siteassist");
+        citations.push({ id, url: _url.toString(), label });
+      }
+    }
+
+    return citations;
+  }, [isStreaming, message.humanAgent, message.parts, message.role]);
+
+  return (
+    <div className="group relative mx-auto mb-12 flex w-full">
+      <div
+        className={cn("flex w-full", {
+          "justify-end": message.role === "user",
+        })}
+      >
+        <div className="grid max-w-[calc(100%-2rem)] min-w-0 gap-1">
+          <div className="grid min-w-0 gap-1 overflow-hidden rounded-xl [&_div]:rounded-sm">
+            {message.parts.map((part, i) => {
+              if (part.type === "text") {
+                return (
+                  <div
+                    key={`part-${message.id}-${i}`}
+                    className={cn("bg-secondary/50 px-3 py-2.5 text-sm", {
+                      "bg-[var(--user-message-bubble)]! text-[var(--user-message-bubble-foreground)]!":
+                        message.role === "user",
+                    })}
+                  >
+                    <Streamdown
+                      key={theme.isDark ? "dark" : "light"}
+                      shikiTheme={[
+                        theme.isDark ? "github-dark" : "github-light",
+                        theme.isDark ? "github-dark" : "github-light",
+                      ]}
+                      className="[&_.shiki]:bg-secondary! size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
+                      isAnimating={isStreaming}
+                      rehypePlugins={[
+                        [
+                          harden,
+                          {
+                            allowedLinkPrefixes: ["mailto:", "*"],
+                            defaultOrigin: window.location.origin,
+                          },
+                        ],
+                      ]}
+                    >
+                      {part.text}
+                    </Streamdown>
+                  </div>
+                );
+              }
+
+              if (part.type.startsWith("tool-action_")) {
+                return (
+                  <RenderActionTool
+                    key={`part-${message.id}-${i}`}
+                    part={part as ToolUIPart}
+                  />
+                );
+              }
+            })}
+          </div>
+
+          {citations.length > 0 && (
+            <div>
+              <p className="text-muted-foreground text-sm">Sources</p>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {citations.map((citation) => (
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="secondary"
+                    className="h-7 rounded-full px-3 text-sm underline-offset-2 hover:underline"
+                  >
+                    <a href={citation.url} target="_blank">
+                      {citation.label}
+                      <ArrowUpRight />
+                    </a>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!message.hideActions && !isStreaming && (
+            <div
+              className={cn(
+                "absolute top-[calc(100%+4px)] right-0 left-0 flex items-center gap-1 px-2",
+                {
+                  "justify-end opacity-0 transition-opacity duration-200 group-hover:opacity-100":
+                    message.role === "user",
+                },
+              )}
+            >
+              <CopyAction message={message} />
+              {message.role === "assistant" && (
+                <>
+                  <ButtonWithTooltip
+                    tooltip="Good Response"
+                    onClick={() => onFeedbackClick?.(message.id, "like")}
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-7"
+                  >
+                    <ThumbsUpIcon
+                      className={cn({
+                        "fill-foreground text-foreground":
+                          message.feedback === "like",
+                      })}
+                    />
+                  </ButtonWithTooltip>
+                  <ButtonWithTooltip
+                    tooltip="Bad Response"
+                    onClick={() => onFeedbackClick?.(message.id, "dislike")}
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-7"
+                  >
+                    <ThumbsDownIcon
+                      className={cn({
+                        "fill-foreground text-foreground":
+                          message.feedback === "dislike",
+                      })}
+                    />
+                  </ButtonWithTooltip>
+                </>
+              )}
+            </div>
+          )}
+
+          {isStreaming ? (
+            <div>
+              <Loader className="size-4 animate-spin" />
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+}
