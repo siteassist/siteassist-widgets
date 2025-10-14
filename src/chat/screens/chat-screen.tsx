@@ -31,22 +31,14 @@ export default function ChatScreen() {
   useEffect(() => {
     const key = `sa_active_conv_id_${apiKey}`;
 
-    if (
-      conversationQuery.isSuccess &&
-      conversationQuery.data.status === "open"
-    ) {
+    if (conversationQuery.data?.status === "open") {
       localStorage.setItem(key, chatId);
     }
 
     return () => {
       localStorage.removeItem(key);
     };
-  }, [
-    apiKey,
-    chatId,
-    conversationQuery.data?.status,
-    conversationQuery.isSuccess,
-  ]);
+  }, [apiKey, chatId, conversationQuery.data?.status]);
 
   if (conversationQuery.isPending) {
     return (
