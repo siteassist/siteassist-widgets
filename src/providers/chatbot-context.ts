@@ -6,6 +6,10 @@ export interface ChatbotContextValue {
   project: Project;
   visitor: Visitor;
   pageUrl?: string | null;
+  isOpened: boolean;
+  closeWidget: () => void;
+  isFullscreen: boolean;
+  toggleFullscreen: () => void;
 }
 
 export const ChatbotContext = createContext<ChatbotContextValue | null>(null);

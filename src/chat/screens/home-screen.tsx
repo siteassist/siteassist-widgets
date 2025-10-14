@@ -5,6 +5,7 @@ import AppBar from "@/components/app-bar";
 import AppBarButton from "@/components/app-bar-button";
 import ChatTitle from "@/components/chat-title";
 import CloseWindowButton from "@/components/close-window-button";
+import FullScreenButton from "@/components/fullscreen-button";
 import MessageInputBar from "@/components/message-input-bar";
 import MessagesView from "@/components/messages-view";
 import { useChatbot } from "@/providers/chatbot-context";
@@ -122,6 +123,7 @@ export default function ChatHomeScreen() {
             >
               <HistoryIcon />
             </AppBarButton>
+            <FullScreenButton />
             <CloseWindowButton />
           </>
         }

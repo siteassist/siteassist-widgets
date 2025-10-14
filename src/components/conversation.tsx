@@ -57,6 +57,8 @@ import useWebSocket from "react-use-websocket";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
+import FullScreenButton from "./fullscreen-button";
+
 export interface ConversationViewProps {
   conversation: Conversation;
 }
@@ -198,42 +200,6 @@ export default function ConversationView({
       },
     },
   );
-
-  // const sendMessageMut = api.useMutation(
-  //   "post",
-  //   "/conversations/{conversationId}/messages",
-  //   {
-  //     onMutate: (vars) => {
-  //       queryClient.setQueryData(
-  //         api.queryOptions("get", "/conversations/{conversationId}", {
-  //           params: { path: { conversationId: conversation.id } },
-  //           headers: getHeaders(apiKey),
-  //         }).queryKey,
-  //         (chat: Conversation) =>
-  //           ({
-  //             ...chat,
-  //             messages: [
-  //               ...chat.messages,
-  //               {
-  //                 object: "message",
-  //                 id: uuidv4(),
-  //                 role: "user",
-  //                 parts: [{ type: "text", text: vars.body?.content ?? "" }],
-  //                 chatId: vars.params.path.conversationId,
-  //                 createdAt: new Date().toISOString(),
-  //                 error: null,
-  //                 feedback: null,
-  //                 feedbackAt: null,
-  //                 humanAgent: null,
-  //                 metadata: null,
-  //                 status: "complete",
-  //               },
-  //             ],
-  //           }) satisfies Conversation,
-  //       );
-  //     },
-  //   },
-  // );
 
   const closeChatMut = $api.useMutation(
     "post",
@@ -393,6 +359,7 @@ export default function ConversationView({
               >
                 <MessageCirclePlusIcon />
               </AppBarButton>
+              <FullScreenButton />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button

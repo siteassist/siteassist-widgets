@@ -14,9 +14,6 @@ export const sendMessageToParent = (type: string, payload?: unknown) => {
   }
 };
 
-export const closeWidget = () => {
-  sendMessageToParent("close");
-};
 
 export function pickTextColorYIQ(hex: string) {
   // strip leading “#” and expand shorthand like #09C to #0099CC

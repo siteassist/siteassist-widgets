@@ -21,6 +21,8 @@ export default function ChatbotProvider({
   const [project, setProject] = useState<Project | null>(null);
   const [visitor, setVisitor] = useState<Visitor | null>(null);
   const [pageUrl, setPageUrl] = useState<string | null>(null);
+  const [isOpened, setIsOpened] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const loadProjectAndCustomer = useCallback(async (apiKey: string) => {
     setIsLoaded(false);
@@ -70,9 +72,24 @@ export default function ChatbotProvider({
         if (success) {
           return setPageUrl(data);
         }
+        break;
       }
+      case "open":
+        setIsOpened(payload as boolean);
+        break;
+      case "fullscreen":
+        setIsFullscreen(payload as boolean);
+        break;
     }
   });
+
+  const closeWidget = useCallback(() => {
+    sendMessageToParent("close");
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    sendMessageToParent("fullscreen", !isFullscreen);
+  }, [isFullscreen]);
 
   if (!isLoaded) {
     return (
@@ -111,7 +128,18 @@ export default function ChatbotProvider({
   }
 
   return (
-    <ChatbotContext.Provider value={{ visitor, project, apiKey, pageUrl }}>
+    <ChatbotContext.Provider
+      value={{
+        visitor,
+        project,
+        apiKey,
+        pageUrl,
+        isOpened,
+        closeWidget,
+        isFullscreen,
+        toggleFullscreen,
+      }}
+    >
       <ProjectProvider project={project}>{children}</ProjectProvider>
     </ChatbotContext.Provider>
   );

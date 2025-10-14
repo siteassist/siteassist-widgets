@@ -6,7 +6,7 @@ import MessageInputBar from "@/components/message-input-bar";
 import MessagesView from "@/components/messages-view";
 import { useProject } from "@/providers/project-context";
 import { getWelcomeUIMessages } from "@/utils/helpers";
-import { HistoryIcon, XIcon } from "lucide-react";
+import { HistoryIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export default function HomeScreen() {
@@ -35,9 +35,6 @@ export default function HomeScreen() {
               tooltip="Conversation History"
             >
               <HistoryIcon />
-            </AppBarButton>
-            <AppBarButton tooltip="Close">
-              <XIcon />
             </AppBarButton>
           </>
         }

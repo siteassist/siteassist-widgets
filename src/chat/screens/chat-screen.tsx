@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 import AppBar from "@/components/app-bar";
 import ChatTitle from "@/components/chat-title";
+import CloseWindowButton from "@/components/close-window-button";
 import ConversationView from "@/components/conversation";
+import FullScreenButton from "@/components/fullscreen-button";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useChatbot } from "@/providers/chatbot-context";
@@ -60,7 +62,15 @@ export default function ChatScreen() {
   if (!conversationQuery.data) {
     return (
       <>
-        <AppBar title={<ChatTitle />} />
+        <AppBar
+          title={<ChatTitle />}
+          trailing={
+            <>
+              <FullScreenButton />
+              <CloseWindowButton />
+            </>
+          }
+        />
         <div className="flex flex-1 flex-col items-center justify-center gap-4">
           <p className="text-muted-foreground text-center">
             Conversation not found!

@@ -1,13 +1,12 @@
-import { useState } from "react";
-import { closeWidget } from "@/utils/helpers";
+import { useChatbot } from "@/providers/chatbot-context";
 import { XIcon } from "lucide-react";
 
 import AppBarButton from "./app-bar-button";
 
 export default function CloseWindowButton() {
-  const [hasParent] = useState(() => window.parent !== window);
+  const { isOpened, closeWidget } = useChatbot();
 
-  if (!hasParent) {
+  if (!isOpened) {
     return null;
   }
 
