@@ -56,10 +56,10 @@ export default function ChatbotProvider({
       return;
     }
 
-    sendMessageToParent("get_page_url");
+    sendMessageToParent("get_context");
 
     const timer = setInterval(() => {
-      sendMessageToParent("get_page_url");
+      sendMessageToParent("get_context");
     }, 3000);
 
     return () => {
@@ -84,8 +84,7 @@ export default function ChatbotProvider({
         break;
       case "set_context": {
         const { success, data } = pageContextSchema.safeParse(payload);
-        if (success) {
-          console.log("set_context", data);
+        if (success && !pageContext?.textSelection) {
           setPageContext(data);
         }
         break;

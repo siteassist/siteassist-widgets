@@ -21,7 +21,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default function ChatHomeScreen() {
   const navigate = useNavigate();
-  const { project, apiKey } = useChatbot();
+  const { project, apiKey, pageContext, setPageContext } = useChatbot();
   const [input, setInput] = useState("");
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -64,9 +64,9 @@ export default function ChatHomeScreen() {
         feedbackAt: null,
         metadata: null,
         humanAgent: null,
-        pageUrl: null,
-        pageTitle: null,
-        textSelection: null,
+        pageUrl: pageContext?.url ?? null,
+        pageTitle: pageContext?.title ?? null,
+        textSelection: pageContext?.textSelection ?? null,
       };
 
       setInput("");
@@ -89,6 +89,7 @@ export default function ChatHomeScreen() {
               pendingMessage: {
                 id: userMessage.id,
                 content: message,
+                pageContext,
               },
               messages: [],
             } satisfies Conversation,
@@ -99,6 +100,8 @@ export default function ChatHomeScreen() {
               headers: getHeaders(apiKey),
             }).queryKey,
           });
+
+          setPageContext(null);
 
           void navigate(`/chats/${res.data.id}`);
         } else {
@@ -114,7 +117,15 @@ export default function ChatHomeScreen() {
         setIsLoading(false);
       }
     },
-    [apiKey, input, isLoading, navigate, queryClient],
+    [
+      isLoading,
+      pageContext,
+      input,
+      apiKey,
+      queryClient,
+      setPageContext,
+      navigate,
+    ],
   );
 
   return (

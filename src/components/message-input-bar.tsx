@@ -93,7 +93,7 @@ export default function MessageInputBar({
         >
           {pageContext?.textSelection && (
             <div className="p-1 pb-0">
-              <div className="bg-foreground/10 flex gap-2 rounded-[22px] rounded-b-lg p-2">
+              <div className="bg-foreground/5 flex gap-2 rounded-[22px] rounded-b-lg p-2">
                 <div className="flex size-6 shrink-0 items-center justify-center">
                   <CornerDownRight className="size-4" />
                 </div>

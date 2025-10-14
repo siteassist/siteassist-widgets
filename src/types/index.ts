@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import type { PageContext } from "@/providers/chatbot-context";
 import type { paths } from "./chat-api.gen";
 
 export type Project =
@@ -19,6 +20,7 @@ export type Conversation =
     pendingMessage?: {
       id: string;
       content: string;
+      pageContext?: PageContext | null;
     };
   };
 

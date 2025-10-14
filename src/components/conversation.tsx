@@ -334,14 +334,20 @@ export default function ConversationView({
           id: conversation.pendingMessage.id,
           role: "user",
           parts: [{ type: "text", text: conversation.pendingMessage.content }],
+          metadata: {
+            pageContext: {
+              textSelection:
+                conversation.pendingMessage.pageContext?.textSelection,
+              pageTitle: conversation.pendingMessage.pageContext?.title,
+              pageUrl: conversation.pendingMessage.pageContext?.url,
+            },
+          },
         },
         {
-          body: { pageContext },
+          body: { pageContext: conversation.pendingMessage.pageContext },
           headers: getHeaders(apiKey),
         },
       );
-      setPageContext(null);
-      sendMessageToParent("get_context");
     }
   });
 
