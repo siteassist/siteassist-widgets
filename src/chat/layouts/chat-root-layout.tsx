@@ -6,21 +6,21 @@ import ChatSidebar from "./chat-sidebar";
 
 export default function ChatRootLayout() {
   return (
-    <div className="relative flex h-svh w-svw flex-col overflow-hidden antialiased">
-      <SidebarProvider>
-        <ChatSidebar />
+    <SidebarProvider>
+      <ChatSidebar />
+      <div className="relative flex h-svh w-svw flex-col overflow-hidden antialiased">
         <div className="flex flex-1 flex-col overflow-hidden">
           <Outlet />
         </div>
-      </SidebarProvider>
-      <SiteAssistBranding />
-    </div>
+        <SiteAssistBranding />
+      </div>
+    </SidebarProvider>
   );
 }
 
 function SiteAssistBranding() {
   return (
-    <div className="z-[99999] px-2 pt-0.5 pb-2">
+    <div className="px-2 pt-0.5 pb-2">
       <p className="text-muted-foreground text-center text-sm">
         Powered by{" "}
         <a
