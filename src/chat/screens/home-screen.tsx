@@ -91,6 +91,12 @@ export default function ChatHomeScreen() {
             } satisfies Conversation,
           );
 
+          void queryClient.invalidateQueries({
+            queryKey: $api.queryOptions("get", "/conversations", {
+              headers: getHeaders(apiKey),
+            }).queryKey,
+          });
+
           void navigate(`/chats/${res.data.id}`);
         } else {
           console.error(res.error);

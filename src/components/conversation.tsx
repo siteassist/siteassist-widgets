@@ -69,6 +69,11 @@ export default function ConversationView({
         headers: getHeaders(apiKey),
       }).queryKey,
     });
+    void queryClient.invalidateQueries({
+      queryKey: $api.queryOptions("get", "/conversations", {
+        headers: getHeaders(apiKey),
+      }).queryKey,
+    });
   };
 
   // AI SDK
