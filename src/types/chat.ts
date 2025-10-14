@@ -1,6 +1,15 @@
 import type { UIMessage } from "ai";
 
-export type CustomUIMessage = UIMessage & {
+
+export type UIMessageMetadata = {
+  pageContext?: {
+    textSelection?: string | null;
+    pageTitle?: string | null;
+    pageUrl?: string | null;
+  };
+};
+
+export type CustomUIMessage = UIMessage<UIMessageMetadata> & {
   assistantType?: "ai" | "human";
   humanAgent?: {
     name: string | null;
@@ -9,4 +18,7 @@ export type CustomUIMessage = UIMessage & {
   sentAt?: string;
   feedback?: "like" | "dislike" | null;
   hideActions?: boolean;
+  // textSelection?: string | null;
+  // pageUrl?: string | null;
+  // pageTitle?: string | null;
 };

@@ -7,7 +7,8 @@ import { useOnMessage } from "@/hooks/use-on-message";
 import { loadProject, loadVisitor, sendMessageToParent } from "@/utils/helpers";
 import z from "zod";
 
-import { ChatbotContext } from "./chatbot-context";
+import type { PageContext } from "./chatbot-context";
+import { ChatbotContext, pageContextSchema } from "./chatbot-context";
 import ProjectProvider from "./project-provider";
 
 export default function ChatbotProvider({
@@ -23,6 +24,7 @@ export default function ChatbotProvider({
   const [pageUrl, setPageUrl] = useState<string | null>(null);
   const [isOpened, setIsOpened] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [pageContext, setPageContext] = useState<PageContext | null>(null);
 
   const loadProjectAndCustomer = useCallback(async (apiKey: string) => {
     setIsLoaded(false);
@@ -80,6 +82,14 @@ export default function ChatbotProvider({
       case "fullscreen":
         setIsFullscreen(payload as boolean);
         break;
+      case "set_context": {
+        const { success, data } = pageContextSchema.safeParse(payload);
+        if (success) {
+          console.log("set_context", data);
+          setPageContext(data);
+        }
+        break;
+      }
     }
   });
 
@@ -135,9 +145,11 @@ export default function ChatbotProvider({
         apiKey,
         pageUrl,
         isOpened,
-        closeWidget,
         isFullscreen,
+        pageContext,
+        closeWidget,
         toggleFullscreen,
+        setPageContext,
       }}
     >
       <ProjectProvider project={project}>{children}</ProjectProvider>

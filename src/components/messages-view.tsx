@@ -228,17 +228,39 @@ function MessageView({
       }
     }
 
-    console.log(citations);
     return citations;
   }, [message.humanAgent, message.parts, message.role]);
 
   return (
-    <div className="group relative mx-auto mb-12 flex w-full">
+    <div className="group relative mb-12 grid w-full">
       <div
-        className={cn("flex w-full", {
-          "justify-end": message.role === "user",
+        className={cn("flex w-full min-w-0 flex-col items-start gap-1", {
+          "items-end": message.role === "user",
         })}
       >
+        {message.metadata?.pageContext?.textSelection && (
+          <div className="bg-secondary/50 grid max-w-[calc(100%-2rem)] gap-2 rounded-lg p-2">
+            <div className="flex gap-2">
+              <div className="bg-border w-px rounded-full"></div>
+              <div className="flex-1">
+                <p className="text-muted-foreground line-clamp-3 text-sm">
+                  {message.metadata?.pageContext?.textSelection}
+                </p>
+              </div>
+            </div>
+            {message.metadata?.pageContext?.pageUrl && (
+              <a
+                href={message.metadata?.pageContext?.pageUrl}
+                target="_blank"
+                className="text-primary truncate text-sm font-medium underline-offset-2 hover:underline"
+                rel="noopener"
+              >
+                {message.metadata?.pageContext?.pageTitle ??
+                  message.metadata?.pageContext?.pageUrl}
+              </a>
+            )}
+          </div>
+        )}
         <div className="grid max-w-[calc(100%-2rem)] min-w-0 gap-1">
           <div className="grid min-w-0 gap-1 overflow-hidden rounded-xl [&_div]:rounded-sm">
             {message.parts.map((part, i) => {
@@ -254,10 +276,13 @@ function MessageView({
                 return (
                   <div
                     key={`part-${message.id}-${i}`}
-                    className={cn("bg-secondary/50 px-3 py-2.5 text-sm", {
-                      "bg-[var(--user-message-bubble)]! text-[var(--user-message-bubble-foreground)]!":
-                        message.role === "user",
-                    })}
+                    className={cn(
+                      "bg-secondary/50 min-w-0 px-3 py-2.5 text-sm",
+                      {
+                        "bg-[var(--user-message-bubble)]! text-[var(--user-message-bubble-foreground)]!":
+                          message.role === "user",
+                      },
+                    )}
                   >
                     <Streamdown
                       key={theme.isDark ? "dark" : "light"}
@@ -265,7 +290,7 @@ function MessageView({
                         theme.isDark ? "github-dark" : "github-light",
                         theme.isDark ? "github-dark" : "github-light",
                       ]}
-                      className="[&_.shiki]:bg-secondary! size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
+                      className="[&_.shiki]:bg-secondary! [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
                       isAnimating={isStreaming}
                       remarkPlugins={[remarkGfm]}
                       rehypePlugins={[

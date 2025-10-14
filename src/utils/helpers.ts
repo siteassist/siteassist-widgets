@@ -14,7 +14,6 @@ export const sendMessageToParent = (type: string, payload?: unknown) => {
   }
 };
 
-
 export function pickTextColorYIQ(hex: string) {
   // strip leading “#” and expand shorthand like #09C to #0099CC
   hex = hex.replace(/^#/, "");
@@ -57,7 +56,13 @@ export function convertToUIMessage(message: Message): CustomUIMessage {
     sentAt: message.createdAt,
     humanAgent: message.humanAgent,
     feedback: message.feedback,
-    metadata: message.metadata,
+    metadata: {
+      pageContext: {
+        textSelection: message.textSelection,
+        pageTitle: message.pageTitle,
+        pageUrl: message.pageUrl,
+      },
+    },
   };
 }
 

@@ -33,6 +33,7 @@ import {
   convertToUIMessage,
   getHeaders,
   getWelcomeUIMessages,
+  sendMessageToParent,
 } from "@/utils/helpers";
 import { $api } from "@/utils/openapi";
 import { useChat } from "@ai-sdk/react";
@@ -57,7 +58,7 @@ export default function ConversationView({
 }: ConversationViewProps) {
   const [input, setInput] = useState("");
   const [showCloseChatWarning, setShowCloseChatWarning] = useState(false);
-  const { apiKey, pageUrl } = useChatbot();
+  const { apiKey, pageContext, setPageContext } = useChatbot();
   const project = useProject();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -275,21 +276,28 @@ export default function ConversationView({
         return;
       }
 
-      const context = {
-        pageUrl,
-      };
-
       void sendMessage(
-        { text: input },
         {
-          body: { context },
+          text: input,
+          metadata: {
+            pageContext: {
+              textSelection: pageContext?.textSelection,
+              pageTitle: pageContext?.title,
+              pageUrl: pageContext?.url,
+            },
+          },
+        },
+        {
+          body: { pageContext },
           headers: getHeaders(apiKey),
         },
       );
 
       setInput("");
+      setPageContext(null);
+      sendMessageToParent("get_context");
     },
-    [apiKey, input, pageUrl, sendMessage],
+    [apiKey, input, pageContext, sendMessage, setPageContext],
   );
 
   const handleFeedback = useCallback(
@@ -328,10 +336,12 @@ export default function ConversationView({
           parts: [{ type: "text", text: conversation.pendingMessage.content }],
         },
         {
-          body: { context: { pageUrl } },
+          body: { pageContext },
           headers: getHeaders(apiKey),
         },
       );
+      setPageContext(null);
+      sendMessageToParent("get_context");
     }
   });
 

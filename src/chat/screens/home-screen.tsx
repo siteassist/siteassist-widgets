@@ -64,6 +64,9 @@ export default function ChatHomeScreen() {
         feedbackAt: null,
         metadata: null,
         humanAgent: null,
+        pageUrl: null,
+        pageTitle: null,
+        textSelection: null,
       };
 
       setInput("");
