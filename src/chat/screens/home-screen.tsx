@@ -72,6 +72,7 @@ export default function ChatHomeScreen() {
       setInput("");
 
       setUserMessage(convertToUIMessage(userMessage));
+      setPageContext(null);
 
       try {
         const res = await fetchClient.POST("/conversations", {
@@ -100,8 +101,6 @@ export default function ChatHomeScreen() {
               headers: getHeaders(apiKey),
             }).queryKey,
           });
-
-          setPageContext(null);
 
           void navigate(`/chats/${res.data.id}`);
         } else {
