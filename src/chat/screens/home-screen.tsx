@@ -2,7 +2,6 @@ import type { Conversation, Message as MessageType } from "@/types";
 import type { CustomUIMessage } from "@/types/chat";
 import { useCallback, useMemo, useState } from "react";
 import AppBar from "@/components/app-bar";
-import AppBarButton from "@/components/app-bar-button";
 import ChatTitle from "@/components/chat-title";
 import CloseWindowButton from "@/components/close-window-button";
 import FullScreenButton from "@/components/fullscreen-button";
@@ -16,7 +15,6 @@ import {
 } from "@/utils/helpers";
 import { $api, fetchClient } from "@/utils/openapi";
 import { useQueryClient } from "@tanstack/react-query";
-import { HistoryIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
@@ -113,16 +111,9 @@ export default function ChatHomeScreen() {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
       <AppBar
-        hideBackButton
         title={<ChatTitle />}
         trailing={
           <>
-            <AppBarButton
-              onClick={() => navigate("/chats")}
-              tooltip="Conversation History"
-            >
-              <HistoryIcon />
-            </AppBarButton>
             <FullScreenButton />
             <CloseWindowButton />
           </>

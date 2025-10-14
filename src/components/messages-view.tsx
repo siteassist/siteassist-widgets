@@ -107,9 +107,13 @@ function CopyAction({ message }: { message: CustomUIMessage }) {
       type="button"
       variant="ghost"
       size="icon"
-      className="size-7"
+      className="size-8"
     >
-      {isCopied ? <CheckIcon /> : <CopyIcon />}
+      {isCopied ? (
+        <CheckIcon className="size-4" />
+      ) : (
+        <CopyIcon className="size-4" />
+      )}
     </ButtonWithTooltip>
   );
 }
@@ -359,10 +363,10 @@ function MessageView({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="size-7"
+                    className="size-8"
                   >
                     <ThumbsUpIcon
-                      className={cn({
+                      className={cn("size-4", {
                         "fill-foreground text-foreground":
                           message.feedback === "like",
                       })}
@@ -374,10 +378,10 @@ function MessageView({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="size-7"
+                    className="size-8"
                   >
                     <ThumbsDownIcon
-                      className={cn({
+                      className={cn("size-4", {
                         "fill-foreground text-foreground":
                           message.feedback === "dislike",
                       })}

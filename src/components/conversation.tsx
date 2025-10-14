@@ -26,12 +26,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useChatbot } from "@/providers/chatbot-context";
 import { useProject } from "@/providers/project-context";
 import { API_URL } from "@/utils/constants";
@@ -45,18 +39,13 @@ import { useChat } from "@ai-sdk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { DefaultChatTransport } from "ai";
 import { formatDistanceToNow } from "date-fns";
-import {
-  HistoryIcon,
-  MessageCirclePlusIcon,
-  MessageCircleXIcon,
-  MoreHorizontalIcon,
-  PlusIcon,
-} from "lucide-react";
+import { MessageCirclePlusIcon, PlusIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import useWebSocket from "react-use-websocket";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
+import CloseWindowButton from "./close-window-button";
 import FullScreenButton from "./fullscreen-button";
 
 export interface ConversationViewProps {
@@ -354,13 +343,14 @@ export default function ConversationView({
           conversation.status === "open" && (
             <>
               <AppBarButton
-                onClick={() => navigate(`/?autoFocus=true`)}
+                onClick={() => navigate("/?autoFocus=true")}
                 tooltip="New Conversation"
               >
                 <MessageCirclePlusIcon />
               </AppBarButton>
               <FullScreenButton />
-              <DropdownMenu>
+              <CloseWindowButton />
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
@@ -377,13 +367,6 @@ export default function ConversationView({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" side="bottom">
                   <DropdownMenuItem
-                    onClick={() => navigate(`/chats`)}
-                    className="cursor-pointer"
-                  >
-                    <HistoryIcon className="text-popover-foreground" />
-                    Conversation History
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
                     onClick={() => setShowCloseChatWarning(true)}
                     className="cursor-pointer"
                   >
@@ -391,7 +374,7 @@ export default function ConversationView({
                     Close Conversation
                   </DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
             </>
           )
         }

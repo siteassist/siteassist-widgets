@@ -1,12 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 import AppBar from "@/components/app-bar";
-import AppBarButton from "@/components/app-bar-button";
 import ChatTitle from "@/components/chat-title";
 import MessageInputBar from "@/components/message-input-bar";
 import MessagesView from "@/components/messages-view";
 import { useProject } from "@/providers/project-context";
 import { getWelcomeUIMessages } from "@/utils/helpers";
-import { HistoryIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export default function HomeScreen() {
@@ -25,20 +23,7 @@ export default function HomeScreen() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <AppBar
-        hideBackButton
-        title={<ChatTitle />}
-        trailing={
-          <>
-            <AppBarButton
-              onClick={() => navigate("/chats")}
-              tooltip="Conversation History"
-            >
-              <HistoryIcon />
-            </AppBarButton>
-          </>
-        }
-      />
+      <AppBar title={<ChatTitle />} />
 
       <MessagesView messages={messages} />
 

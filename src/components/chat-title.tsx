@@ -11,7 +11,7 @@ export default function ChatTitle({
       {project.chatWidgetConfig.assistantAvatar && (
         <img
           src={agent?.image || project.chatWidgetConfig.assistantAvatar}
-          className="size-8 shrink-0 overflow-hidden rounded-full object-cover"
+          className="size-6 shrink-0 overflow-hidden rounded-full object-cover"
         />
       )}
       <div className="min-w-0 space-y-1">

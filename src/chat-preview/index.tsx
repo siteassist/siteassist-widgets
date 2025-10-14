@@ -2,7 +2,8 @@ import "@/styles/globals.css";
 
 import type { Theme } from "@/providers/theme-context";
 import type { Project } from "@/types";
-import { lazy, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import NotFoundScreen from "@/components/screens/not-found-screen";
 import { Toaster } from "@/components/ui/sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,15 +15,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 import { createMemoryRouter, RouterProvider } from "react-router";
 
-const ChatRootLayout = lazy(() => import("@/layouts/chat-root-layout"));
-const NotFoundScreen = lazy(
-  () => import("@/components/screens/not-found-screen"),
-);
-const ChatScreen = lazy(() => import("./screens/chat-screen"));
-const ChatsScreen = lazy(() => import("./screens/chats-screen"));
-const HelpScreen = lazy(() => import("./screens/help-screen"));
-const HomeScreen = lazy(() => import("./screens/home-screen"));
-const QnAScreen = lazy(() => import("./screens/qna-screen"));
+import ChatRootLayout from "./layouts/chat-root-layout";
+import ChatScreen from "./screens/chat-screen";
+import HomeScreen from "./screens/home-screen";
 
 const queryClient = new QueryClient();
 
@@ -41,20 +36,8 @@ const router = createMemoryRouter([
         Component: HomeScreen,
       },
       {
-        path: "chats",
-        Component: ChatsScreen,
-      },
-      {
-        path: "qnas",
-        Component: HelpScreen,
-      },
-      {
         path: "chats/:chatId",
         Component: ChatScreen,
-      },
-      {
-        path: "qnas/:qnaId",
-        Component: QnAScreen,
       },
     ],
   },

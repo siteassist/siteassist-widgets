@@ -1,12 +1,18 @@
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { APP_URL } from "@/utils/constants";
 import { Outlet } from "react-router";
 
+import ChatSidebar from "./chat-sidebar";
+
 export default function ChatRootLayout() {
   return (
-    <div className="bg-background text-foreground relative flex h-svh w-svw flex-col overflow-hidden antialiased">
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Outlet />
-      </div>
+    <div className="relative flex h-svh w-svw flex-col overflow-hidden antialiased">
+      <SidebarProvider>
+        <ChatSidebar />
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <Outlet />
+        </div>
+      </SidebarProvider>
       <SiteAssistBranding />
     </div>
   );
