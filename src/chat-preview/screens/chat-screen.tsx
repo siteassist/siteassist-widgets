@@ -28,6 +28,9 @@ const EXAMPLE_MESSAGES: Message[] = [
     error: null,
     metadata: null,
     humanAgent: null,
+    pageUrl: null,
+    pageTitle: null,
+    textSelection: null,
   },
   {
     object: "message",
@@ -47,6 +50,9 @@ const EXAMPLE_MESSAGES: Message[] = [
     error: null,
     metadata: null,
     humanAgent: null,
+    pageUrl: null,
+    pageTitle: null,
+    textSelection: null,
   },
 ];
 
