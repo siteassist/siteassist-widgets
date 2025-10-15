@@ -106,12 +106,10 @@ export default function ChatHomeScreen() {
         } else {
           console.error(res.error);
           toast.error("Failed to start conversation");
-          setUserMessage(null);
         }
       } catch (error) {
         console.error(error);
         toast.error("Failed to start conversation");
-        setUserMessage(null);
       } finally {
         setIsLoading(false);
       }

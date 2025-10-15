@@ -70,6 +70,9 @@ export default function ConversationView({
         headers: getHeaders(apiKey),
       }).queryKey,
     });
+  };
+
+  const refreshConversations = () => {
     void queryClient.invalidateQueries({
       queryKey: $api.queryOptions("get", "/conversations", {
         headers: getHeaders(apiKey),
@@ -116,6 +119,9 @@ export default function ConversationView({
     },
     onFinish: () => {
       void refreshConversation();
+      if (!conversation.title) {
+        void refreshConversations();
+      }
     },
   });
 
@@ -184,6 +190,9 @@ export default function ConversationView({
               });
               void refreshConversation();
             }
+            if (message.role === "user" && !conversation.title) {
+              void refreshConversations();
+            }
           }
 
           if (data.type === "human_assigned") {
@@ -202,12 +211,8 @@ export default function ConversationView({
     {
       onSuccess: () => {
         toast.success("Conversation closed.");
-        refreshConversation();
-        void queryClient.invalidateQueries({
-          queryKey: $api.queryOptions("get", "/conversations", {
-            headers: getHeaders(apiKey),
-          }).queryKey,
-        });
+        void refreshConversation();
+        void refreshConversations();
         void navigate("/", { replace: true });
       },
       onError: (error) => {

@@ -157,10 +157,11 @@ function Conversations() {
                     isActive={location.pathname === `/chats/${conversation.id}`}
                   >
                     <span className="flex-1 truncate">
-                      {conversation.lastMessage?.parts
-                        .filter((p) => p.type === "text")
-                        .map((p) => p.text)
-                        .join(" ") || conversation.id}
+                      {conversation.title || (
+                        <span className="text-muted-foreground">
+                          Untitled Chat
+                        </span>
+                      )}
                     </span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
