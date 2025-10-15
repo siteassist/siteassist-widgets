@@ -1,6 +1,13 @@
 import type { ChatStatus } from "ai";
 import type { Dispatch, FormEventHandler, SetStateAction } from "react";
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useContext,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { useOnMessage } from "@/hooks/use-on-message";
 import { cn } from "@/lib/utils";
@@ -27,14 +34,15 @@ export default function MessageInputBar({
   onSubmit,
   onStop,
 }: MessageInputBarProps) {
+  const [previousOpened, setPreviousOpened] = useState(false);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const project = useProject();
   const [isFocused, setIsFocused] = useState(false);
   const chatbotContext = useContext(ChatbotContext);
-
   const pageContext = chatbotContext?.pageContext;
-
   const loading = status === "streaming" || status === "submitted";
+
+  const isOpened = chatbotContext?.isOpened;
 
   const sendButton = useMemo(() => {
     if (loading) {
@@ -79,9 +87,17 @@ export default function MessageInputBar({
     }
   }, [input, isFocused]);
 
+  const openChanged = useEffectEvent((open: boolean) => {
+    if (!previousOpened && open) {
+      textAreaRef.current?.focus();
+    }
+  });
+
   useEffect(() => {
-    textAreaRef.current?.focus();
-  }, [pageContext?.textSelection]);
+    // if chat widget comes from a close state to open state, then focus the text area
+    openChanged(isOpened ?? false);
+    setPreviousOpened(isOpened ?? false);
+  }, [isOpened]);
 
   return (
     <div className="from-background/0 via-background to-background relative z-20 shrink-0 bg-gradient-to-b via-[1.25rem]">

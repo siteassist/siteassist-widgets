@@ -33,7 +33,6 @@ import {
   convertToUIMessage,
   getHeaders,
   getWelcomeUIMessages,
-  sendMessageToParent,
 } from "@/utils/helpers";
 import { $api } from "@/utils/openapi";
 import { useChat } from "@ai-sdk/react";
@@ -300,7 +299,6 @@ export default function ConversationView({
 
       setInput("");
       setPageContext(null);
-      sendMessageToParent("get_context");
     },
     [apiKey, input, pageContext, sendMessage, setPageContext],
   );

@@ -52,7 +52,11 @@ export default function ChatbotProvider({
   }, [apiKey, loadProjectAndCustomer]);
 
   useEffect(() => {
-    if (window.parent === window) {
+    if (
+      window.parent === window ||
+      !!pageContext?.textSelection?.trim() ||
+      !isOpened
+    ) {
       return;
     }
 
@@ -65,7 +69,7 @@ export default function ChatbotProvider({
     return () => {
       clearInterval(timer);
     };
-  }, []);
+  }, [isOpened, pageContext?.textSelection]);
 
   useOnMessage((type, payload) => {
     switch (type) {
@@ -84,7 +88,10 @@ export default function ChatbotProvider({
         break;
       case "set_context": {
         const { success, data } = pageContextSchema.safeParse(payload);
-        if (success && !pageContext?.textSelection) {
+        if (
+          success &&
+          (!!data.textSelection?.trim() || !pageContext?.textSelection?.trim())
+        ) {
           setPageContext(data);
         }
         break;
