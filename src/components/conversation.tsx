@@ -364,17 +364,16 @@ export default function ConversationView({
       <AppBar
         title={<ChatTitle agent={conversation.humanAgent} />}
         trailing={
-          conversation.status === "open" && (
-            <>
-              <AppBarButton
-                onClick={() => navigate("/?autoFocus=true")}
-                tooltip="New Conversation"
-              >
-                <MessageCirclePlusIcon />
-              </AppBarButton>
-              <FullScreenButton />
-              <CloseWindowButton />
-              {/* <DropdownMenu>
+          <>
+            <AppBarButton
+              onClick={() => navigate("/?autoFocus=true")}
+              tooltip="New Conversation"
+            >
+              <MessageCirclePlusIcon />
+            </AppBarButton>
+            <FullScreenButton />
+            <CloseWindowButton />
+            {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
@@ -399,8 +398,7 @@ export default function ConversationView({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu> */}
-            </>
-          )
+          </>
         }
       />
 
