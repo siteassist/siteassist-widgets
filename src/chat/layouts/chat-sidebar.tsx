@@ -88,7 +88,7 @@ function Conversations() {
     {
       params: {
         query: {
-          orderBy: "lastInterationAt",
+          orderBy: "lastInteractionAt",
           orderDir: "desc",
           limit: 20,
           offset: 0,
