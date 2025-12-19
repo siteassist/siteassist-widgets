@@ -4,6 +4,8 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@source "../../node_modules/streamdown/dist/*.js";
+
 :root,
 .light {
   --radius: 0.625rem;
