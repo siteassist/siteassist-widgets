@@ -23,7 +23,7 @@
   "scripts": {
     "clean": "git clean -xdf .turbo dist node_modules",
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc -b && vite build",
     "format": "prettier --check . --ignore-path .gitignore",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -97,6 +97,7 @@
     "@tailwindcss/postcss": "^4.1.14",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.14",
+    "@types/node": "^25.9.3",
     "@types/pluralize": "^0.0.33",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
