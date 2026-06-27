@@ -22,16 +22,10 @@ export default defineConfig({
     client: {
       build: {
         rollupOptions: {
-          external: ["react", "react-dom"],
           input: {
             main: resolve(__dirname, "index.html"),
             chat: resolve(__dirname, "chat.html"),
             "chat-preview": resolve(__dirname, "chat-preview.html"),
-          },
-          output: {
-            manualChunks: {
-              streamdown: ["streamdown"],
-            },
           },
         },
       },
