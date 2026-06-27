@@ -1,13 +1,14 @@
 import type { Message } from "@/types";
 import type { CustomUIMessage } from "@/types/chat";
-import { useMemo, useState } from "react";
+import { lazy, useMemo, useState } from "react";
 import AppBar from "@/components/app-bar";
 import ChatTitle from "@/components/chat-title";
 import MessageInputBar from "@/components/message-input-bar";
-import MessagesView from "@/components/messages-view";
 import { useProject } from "@/providers/project-context";
 import { convertToUIMessage, getWelcomeUIMessages } from "@/utils/helpers";
 import { toast } from "sonner";
+
+const MessagesView = lazy(() => import("@/components/messages-view"));
 
 const EXAMPLE_MESSAGES: Message[] = [
   {

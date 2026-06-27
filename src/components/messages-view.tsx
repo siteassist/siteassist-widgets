@@ -43,7 +43,7 @@ export default function MessagesView({
       resize="smooth"
       role="log"
     >
-      <StickToBottom.Content className="mx-auto max-w-screen-lg px-4 pt-8 pb-20">
+      <StickToBottom.Content className="mx-auto max-w-5xl px-4 pt-8 pb-20">
         {messages.map((message, index) => {
           const isLastMessage = index === messages.length - 1;
           const isStreaming = isLastMessage && status === "streaming";
@@ -279,7 +279,7 @@ function MessageView({
                     className={cn(
                       "bg-secondary/50 min-w-0 px-3 py-2.5 text-sm",
                       {
-                        "bg-[var(--user-message-bubble)]! text-[var(--user-message-bubble-foreground)]!":
+                        "bg-(--user-message-bubble)! text-(--user-message-bubble-foreground)!":
                           message.role === "user",
                       },
                     )}

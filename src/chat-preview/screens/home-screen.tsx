@@ -1,11 +1,12 @@
-import { useCallback, useMemo, useState } from "react";
+import { lazy, useCallback, useMemo, useState } from "react";
 import AppBar from "@/components/app-bar";
 import ChatTitle from "@/components/chat-title";
 import MessageInputBar from "@/components/message-input-bar";
-import MessagesView from "@/components/messages-view";
 import { useProject } from "@/providers/project-context";
 import { getWelcomeUIMessages } from "@/utils/helpers";
 import { useNavigate } from "react-router";
+
+const MessagesView = lazy(() => import("@/components/messages-view"));
 
 export default function HomeScreen() {
   const project = useProject();

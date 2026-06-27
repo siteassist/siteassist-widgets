@@ -3,6 +3,7 @@ import type { CustomUIMessage } from "@/types/chat";
 import type { TextPart } from "ai";
 import type { FormEvent } from "react";
 import {
+  lazy,
   useCallback,
   useEffect,
   useEffectEvent,
@@ -14,7 +15,6 @@ import AppBarButton from "@/components/app-bar-button";
 import ChatTitle from "@/components/chat-title";
 import ConnectonStatus from "@/components/conection-status";
 import MessageInputBar from "@/components/message-input-bar";
-import MessagesView from "@/components/messages-view";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -47,6 +47,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import CloseWindowButton from "./close-window-button";
 import FullScreenButton from "./fullscreen-button";
+
+const MessagesView = lazy(() => import("@/components/messages-view"));
 
 export interface ConversationViewProps {
   conversation: Conversation;

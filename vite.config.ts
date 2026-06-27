@@ -28,6 +28,11 @@ export default defineConfig({
             chat: resolve(__dirname, "chat.html"),
             "chat-preview": resolve(__dirname, "chat-preview.html"),
           },
+          output: {
+            manualChunks: {
+              streamdown: ["streamdown"],
+            },
+          },
         },
       },
     },

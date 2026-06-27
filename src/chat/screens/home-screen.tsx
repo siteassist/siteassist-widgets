@@ -1,12 +1,11 @@
 import type { Conversation, Message as MessageType } from "@/types";
 import type { CustomUIMessage } from "@/types/chat";
-import { useCallback, useMemo, useState } from "react";
+import { lazy, useCallback, useMemo, useState } from "react";
 import AppBar from "@/components/app-bar";
 import ChatTitle from "@/components/chat-title";
 import CloseWindowButton from "@/components/close-window-button";
 import FullScreenButton from "@/components/fullscreen-button";
 import MessageInputBar from "@/components/message-input-bar";
-import MessagesView from "@/components/messages-view";
 import { useChatbot } from "@/providers/chatbot-context";
 import {
   convertToUIMessage,
@@ -18,6 +17,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
+
+const MessagesView = lazy(() => import("@/components/messages-view"));
 
 export default function ChatHomeScreen() {
   const navigate = useNavigate();
