@@ -165,7 +165,6 @@ export default function ConversationView({
         toast.error("Connection lost. Please refresh the page.");
       },
       onMessage: (event) => {
-        console.log("WS Event", event);
         try {
           const data = JSON.parse(event.data as string) as
             | {
